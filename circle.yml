@@ -1,3 +1,7 @@
+dependencies:
+  override:
+    - npm install --dev
+
 test:
     pre: 
-        mocha
+       - mocha
