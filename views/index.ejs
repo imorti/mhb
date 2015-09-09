@@ -15,61 +15,28 @@
         width: 100%;
       }
     </style>
-    <script type="text/javascript">
-      var watchID;
-      var geoLoc;
-      var map;
-      var infowindow;
+    <script>
+var map;
+var infowindow;
 
-      map = new google.maps.Map(document.getElementById('map'), {
-        center: pyrmont,
-        zoom: 15
-      });
+function initMap() {
+  var pyrmont = {lat: 40.740128, lng: -73.995220};
 
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: pyrmont,
+    zoom: 15
+  });
 
-      function showLocation(position) {
-         var latitude = position.coords.latitude;
-         var longitude = position.coords.longitude;
+  infowindow = new google.maps.InfoWindow();
 
-      }
+  var service = new google.maps.places.PlacesService(map);
+  service.nearbySearch({
+    location: pyrmont,
+    radius: 700,
+    types: ['bar']
+  }, callback);
 
-      function errorHandler(err) {
-         if(err.code == 1) {
-            alert("Error: Access is denied!");
-         }
-
-         else if( err.code == 2) {
-            alert("Error: Position is unavailable!");
-         }
-      }
-
-      function getLocationUpdate(){
-         if(navigator.geolocation){
-            // timeout at 60000 milliseconds (60 seconds)
-            var options = {timeout:60000};
-            geoLoc = navigator.geolocation;
-            watchID = geoLoc.watchPosition(showLocation, errorHandler, options);
-         }
-
-         else{
-            alert("Sorry, browser does not support geolocation!");
-         }
-      }
-
-    marker.addListener('click', function() {
-        map.setZoom(18);
-          map.setCenter(marker.getPosition());
-        });
-
-
-    function createMarker(place) {
-      var placeLoc = place.geometry.location;
-      var marker = new google.maps.Marker({
-        map: map,
-        position: place.geometry.location
-    });
-
-  map.addListener('center_changed', function() {
+    map.addListener('center_changed', function() {
     // 3 seconds after the center of the map has changed, pan back to the
     // marker.
     window.setTimeout(function() {
@@ -77,10 +44,37 @@
     }, 3000);
   });
 }
-   </script>
+
+function callback(results, status) {
+  if (status === google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      createMarker(results[i]);
+    }
+  }
+}
+
+function createMarker(place) {
+  var placeLoc = place.geometry.location;
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location
+  });
+
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
+  });
+
+  marker.addListener('click', function() {
+    map.setZoom(18);
+    map.setCenter(marker.getPosition());
+  });
+}
+
+    </script>
   </head>
   <body>
     <div id="map"></div>
-    <script src="https://maps.googleapis.com/maps/api/js?signed_in=true&libraries=places&callback=getLocationUpdate" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?signed_in=true&libraries=places&callback=initMap" async defer></script>
   </body>
 </html>
