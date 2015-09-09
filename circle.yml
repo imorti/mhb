@@ -5,3 +5,10 @@ dependencies:
 test:
     pre: 
        - mocha
+
+
+deployment:
+   staging:
+      branch: master
+      commands:
+       - cf api <myapiurl> && cf login -u <myuser> -p <mypass> -o <myorg> -s <myspace>
