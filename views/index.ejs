@@ -22,16 +22,18 @@
 // prompted by your browser. If you see the error "The Geolocation service
 // failed.", it means you probably did not give permission for the browser to
 // locate you.
+var map;
+var infoWindow;
 
 function initMap() {
 
   var pyrmont;
 
-  var map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 40.740421, lng: -73.995786},
     zoom: 16
   });
-  var infoWindow = new google.maps.InfoWindow({map: map});
+infoWindow = new google.maps.InfoWindow({map: map});
 
   // Try HTML5 geolocation.
   if (navigator.geolocation) {
@@ -77,11 +79,11 @@ function createMarker(place) {
   var marker = new google.maps.Marker({
     map: map,
     position: place.geometry.location
-  });
+  })
 
   google.maps.event.addListener(marker, 'click', function() {
-    infowindow.setContent(place.name);
-    infowindow.open(map, this);
+    infoWindow.setContent(place.name);
+    infoWindow.open(map, this);
   });
 }
 
