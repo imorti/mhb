@@ -24,9 +24,12 @@
 // locate you.
 
 function initMap() {
+
+  var pyrmont;
+
   var map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: 40.740421, lng: -73.995786},
-    zoom: 6
+    zoom: 16
   });
   var infoWindow = new google.maps.InfoWindow({map: map});
 
@@ -38,8 +41,18 @@ function initMap() {
         lng: position.coords.longitude
       };
 
+    pyrmont = pos;
+    var request = {
+    location: pyrmont,
+    radius: '500',
+    types: ['bar']
+  };
+
+  service = new google.maps.places.PlacesService(map);
+  service.nearbySearch(request, callback);
+
       infoWindow.setPosition(pos);
-      infoWindow.setContent('Location found.');
+      infoWindow.setContent('Here you are!');
       map.setCenter(pos);
     }, function() {
       handleLocationError(true, infoWindow, map.getCenter());
@@ -50,6 +63,28 @@ function initMap() {
   }
 }
 
+function callback(results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+    for (var i = 0; i < results.length; i++) {
+      var place = results[i];
+      createMarker(results[i]);
+    }
+  }
+}
+
+function createMarker(place) {
+  var placeLoc = place.geometry.location;
+  var marker = new google.maps.Marker({
+    map: map,
+    position: place.geometry.location
+  });
+
+  google.maps.event.addListener(marker, 'click', function() {
+    infowindow.setContent(place.name);
+    infowindow.open(map, this);
+  });
+}
+
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.setPosition(pos);
   infoWindow.setContent(browserHasGeolocation ?
@@ -58,7 +93,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 }
 
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gqRr70060chHk8ah73tEvGoT5ZA3G1E&signed_in=true&callback=initMap"
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gqRr70060chHk8ah73tEvGoT5ZA3G1E&signed_in=true&libraries=places&callback=initMap"
         async defer>
     </script>
   </body>
