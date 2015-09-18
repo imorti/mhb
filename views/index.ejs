@@ -24,24 +24,23 @@
 // locate you.
 var map;
 var infoWindow;
+var currentLat;
+var currentLong;
 
 function initMap() {
 
   var pyrmont;
-
-  map = new google.maps.Map(document.getElementById('map'), {
-    center: {lat: 40.740421, lng: -73.995786},
-    zoom: 16
-  });
-infoWindow = new google.maps.InfoWindow({map: map});
 
   // Try HTML5 geolocation.
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
       var pos = {
         lat: position.coords.latitude,
-        lng: position.coords.longitude
+        lng: position.coords.longitude,
       };
+
+      currentLat  = position.coords.latitude;
+      currentLong = position.coords.longitude;
 
     pyrmont = pos;
     var request = {
@@ -49,6 +48,12 @@ infoWindow = new google.maps.InfoWindow({map: map});
     radius: '500',
     types: ['bar']
   };
+
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: {lat: currentLat, lng: currentLong},
+    zoom: 16
+  });
+infoWindow = new google.maps.InfoWindow({map: map});
 
   service = new google.maps.places.PlacesService(map);
   service.nearbySearch(request, callback);
