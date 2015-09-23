@@ -53,6 +53,7 @@ function initMap() {
     center: {lat: currentLat, lng: currentLong},
     zoom: 16
   });
+
 infoWindow = new google.maps.InfoWindow({map: map});
 
   service = new google.maps.places.PlacesService(map);
@@ -68,6 +69,7 @@ infoWindow = new google.maps.InfoWindow({map: map});
     // Browser doesn't support Geolocation
     handleLocationError(false, infoWindow, map.getCenter());
   }
+
 }
 
 function callback(results, status) {
@@ -84,7 +86,20 @@ function createMarker(place) {
   var marker = new google.maps.Marker({
     map: map,
     position: place.geometry.location
-  })
+  });
+
+  map.addListener('center_changed', function() {
+   // 3 seconds after the center of the map has changed, pan back to the
+   // marker.
+   window.setTimeout(function() {
+     map.panTo(marker.getPosition());
+   }, 8000);
+ });
+
+    marker.addListener('click', function() {
+      map.setZoom(16);
+      map.setCenter(marker.getPosition());
+    });
 
   google.maps.event.addListener(marker, 'click', function() {
     infoWindow.setContent(place.name);
@@ -100,6 +115,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 }
 
     </script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gqRr70060chHk8ah73tEvGoT5ZA3G1E&signed_in=true&libraries=places&callback=initMap"
         async defer>
     </script>
