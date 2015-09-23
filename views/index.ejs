@@ -88,13 +88,6 @@ function createMarker(place) {
     position: place.geometry.location
   });
 
-  map.addListener('center_changed', function() {
-   // 3 seconds after the center of the map has changed, pan back to the
-   // marker.
-   window.setTimeout(function() {
-     map.panTo(marker.getPosition());
-   }, 8000);
- });
 
     marker.addListener('click', function() {
       map.setZoom(16);
@@ -104,6 +97,21 @@ function createMarker(place) {
   google.maps.event.addListener(marker, 'click', function() {
     infoWindow.setContent(place.name);
     infoWindow.open(map, this);
+    saveInteraction('click', map, place);
+  });
+}
+
+function saveInteraction(type, map, place) {
+    $.ajax({
+    type: "POST",
+    headers: { 'Access-Control-Allow-Origin': '*',  },
+    url: "http://localhost:9000",
+    data: "interaction {" + JSON.stringify(place) +" }",
+    dataType: "json",
+    contentType: "application/json; charset=utf-8",
+    success: function(){
+        //
+    }
   });
 }
 
@@ -115,7 +123,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
 }
 
     </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> 
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA1gqRr70060chHk8ah73tEvGoT5ZA3G1E&signed_in=true&libraries=places&callback=initMap"
         async defer>
     </script>
