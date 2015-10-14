@@ -15,11 +15,6 @@ module.exports = function(grunt) {
         dest: 'build/<%= pkg.name %>.min.js'
       }
     },
-    shell: {
-        springxd: {
-            command: 'xd-singlenode'
-        }
-    },
     mochaTest: {
       test: {
         options: {

@@ -4,16 +4,6 @@
     <title>My Hot Bartender</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <style>
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
-      #map {
-        height: 100%;
-      }
-    </style>
   </head>
   <body>
     <div id="map"></div>
@@ -104,13 +94,12 @@ function createMarker(place) {
 function saveInteraction(type, map, place) {
     $.ajax({
     type: "POST",
-    headers: { 'Access-Control-Allow-Origin': '*',  },
-    url: "http://localhost:9000",
-    data: "interaction {" + JSON.stringify(place) +" }",
+    url: "http://localhost:3000/",
+    data: JSON.stringify({"objectData": place.name}),
     dataType: "json",
     contentType: "application/json; charset=utf-8",
     success: function(){
-        //
+        console.log("successful request");
     }
   });
 }
